@@ -53,7 +53,7 @@ def main():
                     userIds += '<@' + user + '> '
                 userIds = userIds.rstrip(' ')
 
-                sc.rtm_send_message(CHANNEL_NAME, gk_welcome.text.format(userIds=userIds, channel=CHANNEL_NAME))
+                print sc.rtm_send_message(CHANNEL_NAME, gk_welcome.text.format(userIds=userIds, channel=CHANNEL_NAME))
                 newMembers = []
 
             time.sleep(0.5)
