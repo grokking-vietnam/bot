@@ -11,8 +11,9 @@ CHANNEL_NAME = "test_bot" #change to #general-discussions
 SLACK_GUIDELINE = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/slack_guideline.md?ts={}'
 SLACK_WELCOME = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/welcome_message.md?ts={}'
 
-INTRODUCE_TIME_INTERVAL = 20 #seconds
-INTRODUCE_MAX_MEMBER = 2
+INTRODUCE_TIME_INTERVAL = 20 #time wait before sending welcoming message on channel when a user join
+INTRODUCE_EXTEND_TIMER = 3 #reset timer when a new user join, maximum 3 times since first user joint.
+INTRODUCE_MAX_MEMBER = 3 #group maximum 3 user and send 1 welcoming message
 
 def main():
     # Create the slackclient instance
@@ -33,7 +34,7 @@ def main():
                         user = slack_message.get('user')
                         
                         #add new members to list for self-introduce in channel
-                        if len(newMembers) == 0:
+                        if len(newMembers) <= INTRODUCE_EXTEND_TIMER:
                             startTimer = time.time()
                         newMembers.append(user)
 
