@@ -5,7 +5,6 @@ import requests
 import time
 import math
 
-
 BOT_TOKEN = os.environ.get('API_TOKEN')
 CHANNEL_NAME = "test_bot" #change to #general-discussions
 
@@ -43,12 +42,6 @@ def main():
                         gk_guideline = requests.get(SLACK_GUIDELINE.format(timestamp))
                         guideline_im = gk_guideline.text.format(user=user)
                         print sc.api_call("chat.postMessage", channel=user, as_user="true", text=guideline_im)
-                    else:
-                        message = slack_message.get("text")
-                        user = slack_message.get("user")
-                        if not message or not user:
-                            continue
-                        sc.rtm_send_message(CHANNEL_NAME, "<@{}> wrote something...".format(user))
 
             #Send introduce message on channel every INTRODUCE_TIME_INTERVAL OR members joint > INTRODUCE_MAX_MEMBER
             if (len(newMembers) > 0) and ((time.time() - startTimer > INTRODUCE_TIME_INTERVAL) or (len(newMembers) >= INTRODUCE_MAX_MEMBER)):
