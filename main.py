@@ -48,12 +48,7 @@ def main():
             if (len(newMembers) > 0) and ((time.time() - startTimer > INTRODUCE_TIME_INTERVAL) or (len(newMembers) >= INTRODUCE_MAX_MEMBER)):
                 timestamp = math.floor(time.time())
                 gk_welcome = requests.get(SLACK_WELCOME.format(timestamp))
-
-                userIds = ''
-                for user in newMembers:
-                    userIds += '<@' + user + '> '
-                userIds = userIds.rstrip(' ')
-
+                userIds = ' '.join(['<@' + user + '>' for user in newMembers])
                 print sc.rtm_send_message(CHANNEL_NAME, gk_welcome.text.format(userIds=userIds, channel=CHANNEL_NAME))
                 newMembers = []
 
