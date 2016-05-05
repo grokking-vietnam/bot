@@ -11,6 +11,19 @@ BOT_TOKEN = os.environ.get('API_TOKEN')
 SLACK_CHANNEL_DESC = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/channels_description.md?ts={}'
 SLACK_WELCOME = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/welcome_message.md?ts={}'
 
+def generate_channel_message(user):
+    timestamp = math.floor(time.time())
+    gk_guideline = requests.get(SLACK_CHANNEL_DESC.format(timestamp))
+    return gk_guideline.text.format(user=user)
+
+
+def generate_welcome_message(user_ids, channel_name):
+    timestamp = math.floor(time.time())
+    gk_welcome = requests.get(SLACK_WELCOME.format(timestamp))
+    gk_welcome.text.format(userIds=user_ids, channel=channel_name)
+    return gk_welcome
+
+
 def main(args):
     channel_name = args.channel
     timer = args.timer
@@ -24,43 +37,41 @@ def main(args):
     new_members = []
 
     # Connect to slack
-    if sc.rtm_connect():
-        channel_id = sc.server.channels.find(channel_name).id
-        while True:
-            # Read latest messages
-            for slack_message in sc.rtm_read():
-                # print slack_message
-                if slack_message.get('type') == 'message':
-                    if slack_message.get('subtype') == 'channel_join' \
-                            and slack_message.get('channel') == channel_id:
-                        user = slack_message.get('user')
-
-                        new_members.append(user)
-                        # add new members to list for self-introduce in channel
-                        if len(new_members) <= extend_timer:
-                            start_timer = time.time()
-
-
-                        # send IM guidelines message
-                        timestamp = math.floor(time.time())
-                        gk_guideline = requests.get(SLACK_CHANNEL_DESC.format(timestamp))
-                        guideline_im = gk_guideline.text.format(user=user)
-                        print sc.api_call("chat.postMessage", channel=user, as_user="true", text=guideline_im)
-
-            # Send introduce message on channel every timer
-            # OR members joint > group_newmember
-            if (len(new_members) > 0) and (
-                        (time.time() - start_timer > timer) or (
-                                len(new_members) >= group_newmember)):
-                timestamp = math.floor(time.time())
-                gk_welcome = requests.get(SLACK_WELCOME.format(timestamp))
-                user_ids = ' '.join(['<@' + user + '>' for user in new_members])
-                print sc.rtm_send_message(channel_name, gk_welcome.text.format(userIds=user_ids, channel=channel_name))
-                new_members = []
-
-            time.sleep(0.5)
-    else:
+    if not sc.rtm_connect():
         print 'Cannot connect'
+        return
+
+    channel_id = sc.server.channels.find(channel_name).id
+    while True:
+        # Read latest messages
+        for slack_message in sc.rtm_read():
+            if (slack_message.get('type') == 'message'
+                and slack_message.get('subtype') == 'channel_join'
+                and slack_message.get('channel') == channel_id):
+                user = slack_message.get('user')
+
+                new_members.append(user)
+                # add new members to list for self-introduce in channel
+                if len(new_members) <= extend_timer:
+                    start_timer = time.time()
+
+
+                # send IM guidelines message
+                guideline_im = generate_channel_desc_message(user)
+                sc.api_call("chat.postMessage", channel=user, as_user="true", text=guideline_im)
+
+        # Send introduce message on channel every timer
+        # OR members joint > group_newmember
+        if ( len(new_members) > 0
+            and (
+                (time.time() - start_timer > timer) or
+                (len(new_members) >= group_newmember)
+            )):
+            user_ids = ' '.join(['<@' + user + '>' for user in new_members])
+            sc.rtm_send_message(channel_name, generate_welcome_message(user_ids, channel_name))
+            new_members = []
+
+        time.sleep(0.5)
 
 
 if __name__ == '__main__':
