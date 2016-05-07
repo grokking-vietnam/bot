@@ -17,5 +17,5 @@ pip install -r requirements.txt
 ```
 4. Run the application
 ```
-API_TOKEN=<api_token> python main.py
+API_TOKEN=<api_token> python main.py --channel=<channel>
 ```

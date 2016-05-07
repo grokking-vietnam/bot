@@ -11,7 +11,7 @@ BOT_TOKEN = os.environ.get('API_TOKEN')
 SLACK_CHANNEL_DESC = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/channels_description.md?ts={}'
 SLACK_WELCOME = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/welcome_message.md?ts={}'
 
-def generate_channel_message(user):
+def generate_channel_desc_message(user):
     timestamp = math.floor(time.time())
     gk_guideline = requests.get(SLACK_CHANNEL_DESC.format(timestamp))
     return gk_guideline.text.format(user=user)
