@@ -17,5 +17,5 @@ pip install -r requirements.txt
 ```
 4. Run the application
 ```
-API_TOKEN=<api_token> python main.py --channel=<channel>
+API_TOKEN=<api_token> GH_USER=<github_username> GH_PASSWORD=<github_password> python main.py --channel=<channel>
 ```

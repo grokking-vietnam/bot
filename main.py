@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
-from slackclient import SlackClient
 import os
 import requests
 import time
 import math
 import argparse
 
-BOT_TOKEN = os.environ.get('API_TOKEN')
+from slackclient import SlackClient
+from github import Github
 
+BOT_TOKEN = os.environ.get('API_TOKEN')
+g = Github(os.environ['GH_USER'], os.environ['GH_PASSWORD'])
 SLACK_CHANNEL_DESC = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/channels_description.md?ts={}'
 SLACK_WELCOME = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/welcome_message.md?ts={}'
-
+JOB_BOARD_REPOS = [
+    'awesome-jobs/jobs'
+]
 def generate_channel_desc_message(user):
     timestamp = math.floor(time.time())
     gk_guideline = requests.get(SLACK_CHANNEL_DESC.format(timestamp))
@@ -23,6 +27,12 @@ def generate_welcome_message(user_ids, channel_name):
     gk_welcome.text.format(userIds=user_ids, channel=channel_name)
     return gk_welcome
 
+
+def get_jobboards():
+    for job_repo in JOB_BOARD_REPOS:
+        repo = g.get_repo(job_repo)
+        for issue in repo.get_issues():
+            print issue.updated_at
 
 def main(args):
     channel_name = args.channel
