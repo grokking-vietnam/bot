@@ -20,9 +20,7 @@ def generate_channel_desc_message(user):
 def generate_welcome_message(user_ids, channel_name):
     timestamp = math.floor(time.time())
     gk_welcome = requests.get(SLACK_WELCOME.format(timestamp))
-    gk_welcome.text.format(userIds=user_ids, channel=channel_name)
-    return gk_welcome
-
+    return gk_welcome.text.format(userIds=user_ids, channel=channel_name)
 
 def main(args):
     channel_name = args.channel
@@ -55,14 +53,13 @@ def main(args):
                 if len(new_members) <= extend_timer:
                     start_timer = time.time()
 
-
                 # send IM guidelines message
                 guideline_im = generate_channel_desc_message(user)
                 sc.api_call("chat.postMessage", channel=user, as_user="true", text=guideline_im)
 
         # Send introduce message on channel every timer
         # OR members joint > group_newmember
-        if ( len(new_members) > 0
+        if (len(new_members) > 0
             and (
                 (time.time() - start_timer > timer) or
                 (len(new_members) >= group_newmember)
