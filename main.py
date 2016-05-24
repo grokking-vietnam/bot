@@ -1,15 +1,22 @@
 # -*- coding: utf-8 -*-
-from slackclient import SlackClient
 import os
 import requests
 import time
 import math
 import argparse
 
+from slackclient import SlackClient
+from github import Github
+
 BOT_TOKEN = os.environ.get('API_TOKEN')
+g = Github(os.environ['GH_UR'], os.environ['GH_PW'])
 
 SLACK_CHANNEL_DESC = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/channels_description.md?ts={}'
 SLACK_WELCOME = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/welcome_message.md?ts={}'
+
+JOB_BOARDS_REPOS = [
+    'awesome-jobs/jobs'
+]
 
 def generate_channel_desc_message(user):
     timestamp = math.floor(time.time())
