@@ -1,4 +1,3 @@
-New jobs:  
-1. {title}  
+{order}. {title}  
 * Keywords: {kw}  
 * Link:  {link}

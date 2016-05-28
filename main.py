@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
+from slackclient import SlackClient
 import os
 import requests
 import time
 import math
 import argparse
-
-from slackclient import SlackClient
-from urllib import urlopen
-import json
 
 BOT_TOKEN = os.environ.get('API_TOKEN')
 
@@ -30,7 +27,7 @@ def generate_welcome_message(user_ids, channel_name):
     gk_welcome = requests.get(SLACK_WELCOME.format(timestamp))
     return gk_welcome.text.format(userIds=user_ids, channel=channel_name)
 
-def main(args):
+def general(args):
     channel_name = args.channel
     timer = args.timer
     extend_timer = args.extend
@@ -78,9 +75,9 @@ def main(args):
 
         time.sleep(0.5)
 
-def generate_jobs_post(title, kw, link):
+def generate_jobs_post(order, title, kw, link):
     gk_jobs_post = requests.get(SLACK_JOBS_POST)
-    return gk_jobs_post.text.format(title=title, kw=kw, link=link)
+    return gk_jobs_post.text.format(order=order, title=title, kw=kw, link=link)
 
 def jobs_post(args):
     sc = SlackClient(BOT_TOKEN)
@@ -97,9 +94,8 @@ def jobs_post(args):
             + "?client_id=" + CLIENT_ID \
             + "&client_secret=" + CLIENT_SECRET
 
-    response = urlopen(API_URL)
-    jsonRaw = response.read()
-    jsonData = json.loads(jsonRaw)
+    r = requests.get(API_URL)
+    jsonData = r.json()
 
     jobs = []
 
@@ -117,10 +113,16 @@ def jobs_post(args):
         print 'Cannot connect'
         return
 
-    job_post = generate_jobs_post(jobs[0]['title'], ", ".join(jobs[0]['labels']), jobs[0]['html_url'])
+    job_post = generate_jobs_post(1, jobs[0]['title'], ", ".join(jobs[0]['labels']), jobs[0]['html_url'])
 
     print job_post
     print sc.api_call("chat.postMessage", as_user="true", channel=channel_name, text=job_post, mrkdwn="true")   
+
+def main(args):
+    if args.channel == 'general':
+        general(args)
+    if args.channel == 'test_bot':
+        jobs_post(args)
 
 
 if __name__ == '__main__':
@@ -138,7 +140,5 @@ if __name__ == '__main__':
                         help='Group maximum n users and send 1 welcoming message. Default: 5',
                         type=int,
                         default=5)
-
     args = parser.parse_args()
-    # main(args)
-    jobs_post(args)
+    main(args)
