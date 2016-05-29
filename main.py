@@ -65,7 +65,7 @@ def main(args):
                 (len(new_members) >= group_newmember)
             )):
             user_ids = ' '.join(['<@' + user + '>' for user in new_members])
-            sc.rtm_send_message(channel_name, generate_welcome_message(user_ids, channel_name))
+            #sc.rtm_send_message(channel_name, generate_welcome_message(user_ids, channel_name))
             new_members = []
 
         time.sleep(0.5)
