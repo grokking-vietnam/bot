@@ -25,13 +25,6 @@ def main(args):
     extend_timer = args.extend
     group_newmember = args.group
 
-    CLIENT_ID = "2d7d4b83a596ae06623c"
-    CLIENT_SECRET = "9167a622887a9f5a468d49ee39142140750141f9"
-
-    API_URL = "https://api.github.com/repos/awesome-jobs/jobs/issues" \
-            + "?client_id=" + CLIENT_ID \
-            + "&client_secret=" + CLIENT_SECRET
-
     r = requests.get(API_URL)
     jsonData = r.json()
 
