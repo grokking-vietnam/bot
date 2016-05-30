@@ -33,6 +33,7 @@ def main(args):
     for job in jsonData:
         item = {}
         item['title'] = job['title']
+        item['id'] = job['id']
         item['html_url'] = job['html_url']
         item['labels'] = []
         for label in job['labels']:
@@ -44,10 +45,29 @@ def main(args):
         print 'Cannot connect'
         return
 
-    job_post = generate_jobs_post(1, jobs[0]['title'], ", ".join(jobs[0]['labels']), jobs[0]['html_url'])
+    # Initialize job post message
+    job_post = "New jobs:\n"
 
-    print job_post
-    print sc.api_call("chat.postMessage", as_user="true", channel=channel_name, text=job_post, mrkdwn="true")   
+    # Open file to read id
+    file = open("id.txt", "r")
+    file_read = file.read()
+    id_from_file = int(file_read)
+
+    # Post jobs from beginning to the previously saved id
+    for index, job in enumerate(jobs):
+        if job['id'] == id_from_file:
+            # If id == previously saved id, then break the loop and save the new id to file
+            os.remove("id.txt")
+            break
+
+        job_post += generate_jobs_post(index + 1, jobs[index]['title'], ", ".join(jobs[index]['labels']), jobs[index]['html_url'])
+
+    # Overwrite the new id to file
+    file2 = open("id.txt", "w")
+    file2.write(str(jobs[0]['id']))
+    file2.close()
+
+    sc.api_call("chat.postMessage", as_user="true", channel=channel_name, text=job_post, mrkdwn="true")   
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='This is Grokking bot')
