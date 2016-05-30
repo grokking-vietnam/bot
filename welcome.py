@@ -10,8 +10,6 @@ BOT_TOKEN = os.environ.get('API_TOKEN')
 
 SLACK_CHANNEL_DESC = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/channels_description.md?ts={}'
 SLACK_WELCOME = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/welcome_message.md?ts={}'
-SLACK_JOBS_POST = 'https://raw.githubusercontent.com/hacknrk/bot/tutran/jobs_post.md'
-
 
 def generate_channel_desc_message(user):
     timestamp = math.floor(time.time())
@@ -67,10 +65,11 @@ def main(args):
                 (len(new_members) >= group_newmember)
             )):
             user_ids = ' '.join(['<@' + user + '>' for user in new_members])
-            sc.rtm_send_message(channel_name, generate_welcome_message(user_ids, channel_name))
+            #sc.rtm_send_message(channel_name, generate_welcome_message(user_ids, channel_name))
             new_members = []
 
         time.sleep(0.5)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='This is Grokking bot')
@@ -87,5 +86,6 @@ if __name__ == '__main__':
                         help='Group maximum n users and send 1 welcoming message. Default: 5',
                         type=int,
                         default=5)
+
     args = parser.parse_args()
     main(args)
