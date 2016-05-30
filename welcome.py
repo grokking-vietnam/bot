@@ -12,9 +12,6 @@ SLACK_CHANNEL_DESC = 'https://raw.githubusercontent.com/grokking-vietnam/docs/ma
 SLACK_WELCOME = 'https://raw.githubusercontent.com/grokking-vietnam/docs/master/welcome_message.md?ts={}'
 SLACK_JOBS_POST = 'https://raw.githubusercontent.com/hacknrk/bot/tutran/jobs_post.md'
 
-JOB_BOARDS_REPOS = [
-    'awesome-jobs/jobs'
-]
 
 def generate_channel_desc_message(user):
     timestamp = math.floor(time.time())
@@ -27,7 +24,7 @@ def generate_welcome_message(user_ids, channel_name):
     gk_welcome = requests.get(SLACK_WELCOME.format(timestamp))
     return gk_welcome.text.format(userIds=user_ids, channel=channel_name)
 
-def general(args):
+def main(args):
     channel_name = args.channel
     timer = args.timer
     extend_timer = args.extend
@@ -74,56 +71,6 @@ def general(args):
             new_members = []
 
         time.sleep(0.5)
-
-def generate_jobs_post(order, title, kw, link):
-    gk_jobs_post = requests.get(SLACK_JOBS_POST)
-    return gk_jobs_post.text.format(order=order, title=title, kw=kw, link=link)
-
-def jobs_post(args):
-    sc = SlackClient(BOT_TOKEN)
-
-    channel_name = args.channel
-    timer = args.timer
-    extend_timer = args.extend
-    group_newmember = args.group
-
-    CLIENT_ID = "2d7d4b83a596ae06623c"
-    CLIENT_SECRET = "9167a622887a9f5a468d49ee39142140750141f9"
-
-    API_URL = "https://api.github.com/repos/awesome-jobs/jobs/issues" \
-            + "?client_id=" + CLIENT_ID \
-            + "&client_secret=" + CLIENT_SECRET
-
-    r = requests.get(API_URL)
-    jsonData = r.json()
-
-    jobs = []
-
-    for job in jsonData:
-        item = {}
-        item['title'] = job['title']
-        item['html_url'] = job['html_url']
-        item['labels'] = []
-        for label in job['labels']:
-            item['labels'].append(label['name'])
-
-        jobs.append(item.copy())
-
-    if not sc.rtm_connect():
-        print 'Cannot connect'
-        return
-
-    job_post = generate_jobs_post(1, jobs[0]['title'], ", ".join(jobs[0]['labels']), jobs[0]['html_url'])
-
-    print job_post
-    print sc.api_call("chat.postMessage", as_user="true", channel=channel_name, text=job_post, mrkdwn="true")   
-
-def main(args):
-    if args.channel == 'general':
-        general(args)
-    if args.channel == 'test_bot':
-        jobs_post(args)
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='This is Grokking bot')
