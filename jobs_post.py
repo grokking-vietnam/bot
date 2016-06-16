@@ -17,15 +17,8 @@ def generate_jobs_post(order, title, kw, link):
     jobs_post_file = open("jobs_post.md", "r").read()
     return jobs_post_file.format(order=order, title=title, kw=kw, link=link)
 
-def main(args):
-    sc = SlackClient(BOT_TOKEN)
-
-    channel_name = args.channel
-    timer = args.timer
-    extend_timer = args.extend
-    group_newmember = args.group
-
-    r = requests.get(API_URL)
+def getJobs(url):
+    r = requests.get(url)
     jsonData = r.json()
 
     jobs = []
@@ -40,6 +33,15 @@ def main(args):
             item['labels'].append(label['name'])
 
         jobs.append(item.copy())
+    return jobs
+
+def main(args):
+    sc = SlackClient(BOT_TOKEN)
+
+    channel_name = args.channel
+    timer = args.timer
+    extend_timer = args.extend
+    group_newmember = args.group
 
     if not sc.rtm_connect():
         print 'Cannot connect'
@@ -47,6 +49,7 @@ def main(args):
 
     # Initialize job post message
     job_post = "New jobs:\n"
+    jobs = getJobs(API_URL)
 
     # Open file to read id
     file = open("id.txt", "r")
