@@ -6,8 +6,8 @@ import math
 import argparse
 
 BOT_TOKEN = os.environ.get('API_TOKEN')
-CLIENT_ID = "2d7d4b83a596ae06623c"
-CLIENT_SECRET = "9167a622887a9f5a468d49ee39142140750141f9"
+CLIENT_ID = os.environ.get('CLIENT_ID')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 
 API_URL = "https://api.github.com/repos/awesome-jobs/jobs/issues" \
 			+ "?client_id=" + CLIENT_ID \
