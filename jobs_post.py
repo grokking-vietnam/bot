@@ -1,5 +1,6 @@
 from slackclient import SlackClient
 import os
+import os.path
 import requests
 import time
 import math
@@ -52,9 +53,12 @@ def main(args):
     jobs = getJobs(API_URL)
 
     # Open file to read id
-    file = open("id.txt", "r")
-    file_read = file.read()
-    id_from_file = int(file_read)
+    if os.path.isfile("id.txt"):
+        file = open("id.txt", "r")
+        file_read = file.read()
+        id_from_file = int(file_read)
+    else:
+        id_from_file = None
 
     # Post jobs from beginning to the previously saved id
     for index, job in enumerate(jobs):
