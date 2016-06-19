@@ -16,6 +16,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 4. Run the application
+
+#### for welcome.py
 ```
-API_TOKEN=<api_token> python main.py --channel=<channel>
+API_TOKEN=<api_token> python welcome.py --channel=<channel>
+```
+
+#### for jobs_post.py
+```
+API_TOKEN=<api_token> CLIENT_ID=<client_id> CLIENT_SECRET=<client_secret> python jobs_post.py --channel=<channel>
 ```

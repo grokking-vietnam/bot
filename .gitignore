@@ -63,3 +63,6 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# id file to keep track of jobs post
+id.txt
