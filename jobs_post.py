@@ -57,6 +57,9 @@ def main(args):
         file = open("id.txt", "r")
         file_read = file.read()
         id_from_file = int(file_read)
+
+        if id_from_file == jobs[0]['id']: 
+            job_post = ""
     else:
         id_from_file = None
 
@@ -67,7 +70,7 @@ def main(args):
             os.remove("id.txt")
             break
 
-        job_post += generate_jobs_post(index + 1, jobs[index]['title'], ", ".join(jobs[index]['labels']), jobs[index]['html_url'])
+        job_post += generate_jobs_post(index + 1, jobs[index]['title'].encode('utf-8'), ", ".join(jobs[index]['labels']), jobs[index]['html_url'])
 
     # Overwrite the new id to file
     file2 = open("id.txt", "w")
